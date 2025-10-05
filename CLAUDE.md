@@ -1,5 +1,20 @@
 # MCP Integration Guidelines
 
+## Template Context
+
+This is a boilerplate template repository. When using this template:
+
+1. **Repository Initialization**: After creating from template, run `./scripts/init-template.sh` to replace all `{{REPO_NAME}}`, `{{GITHUB_USER}}`, and `{{REPO_PATH}}` placeholders.
+
+2. **MCP Server Setup**: Copy `.mcp.example.json` to `claude.json` and configure:
+   - kit-dev for codebase intelligence
+   - Ref for documentation research
+   - Linear for ticket management (optional)
+
+3. **Thoughts Submodule**: Create a separate repository for your project's thoughts and add as submodule, or remove thoughts references if not needed.
+
+---
+
 This project uses Kit MCP (codebase intelligence), Ref MCP (documentation research), and Linear MCP (ticket management) to enhance code analysis and development workflow.
 
 ## Tool Selection Decision Tree

@@ -1,58 +1,102 @@
-# {{REPO_NAME}}
+# Claude Code Boilerplate
 
-Reverse engineering project with Claude Code MCP integration.
+> Production-ready GitHub template for AI-assisted development with Claude Code
 
-## Claude Code Setup
+This template provides a complete AI-assisted development workflow system featuring:
+- **10 specialized MCP-enhanced agents** with graceful degradation
+- **20+ workflow automation commands** for common development tasks
+- **Git submodule knowledge management** for systematic documentation
+- **Self-reporting error visibility** in all agents
 
-This repository uses Claude Code with MCP (Model Context Protocol) servers for enhanced code analysis and documentation research.
+Originally adapted from [HumanLayer](https://github.com/humanlayer/humanlayer) workflow patterns. See [ACKNOWLEDGMENTS.md](ACKNOWLEDGMENTS.md) for full attribution.
 
-### Prerequisites
-
-- **Claude Code**: https://docs.claude.com/en/docs/claude-code/setup
-- **Node.js 18+** (for npx to run MCP servers)
+## Using This Template
 
 ### Quick Start
 
-1. **Clone the repository:**
+1. **Create repository from template:**
    ```bash
-   git clone <repo-url>
-   cd {{REPO_NAME}}
+   # On GitHub: Click "Use this template" button
+   # Or via CLI:
+   gh repo create my-project --template Ferymad/claude-code-boilerplate
    ```
 
-2. **Open Claude Code:**
+2. **Initialize the template:**
+   ```bash
+   cd my-project
+   ./scripts/init-template.sh
+   ```
+
+3. **Complete setup:**
+   ```bash
+   ./scripts/setup.sh
+   ```
+
+4. **Start Claude Code:**
    ```bash
    claude
    ```
 
-3. **Approve MCP servers when prompted:**
-   - ✅ **kit-dev** - Code analysis and AST tools
-   - ✅ **ref** - Documentation search and research
+### What Gets Customized Automatically
 
-4. **Done!** Agents will use MCP tools automatically.
+The initialization script replaces these placeholders:
+- `{{REPO_NAME}}` → Your repository name
+- `{{GITHUB_USER}}` → Your GitHub username
+- `{{REPO_PATH}}` → Your local repository path
 
-### Optional: Kit MCP API Key
+These are automatically configured in:
+- All agent prompts (`.claude/agents/`)
+- All command prompts (`.claude/commands/`)
+- Documentation (README.md, CLAUDE.md)
+- Helper scripts (`hack/`)
 
-For higher rate limits, set the Kit MCP API key:
+### What Needs Manual Customization
 
-```bash
-export KIT_API_KEY="your_key_here"
+After initialization, you should customize:
+
+1. **MCP Server Configuration** (`claude.json`):
+   - Add API keys for Linear, if using
+   - Configure kit-dev paths
+   - Add any additional MCP servers
+
+2. **Team Settings** (`.claude/settings.json`):
+   - Update team name
+   - Adjust budget controls
+   - Configure auto-approved tools
+
+3. **Thoughts Submodule**:
+   - Create a separate GitHub repository: `{your-repo}-thoughts`
+   - Add as submodule: `git submodule add <url> thoughts`
+   - Or use template without thoughts (remove references)
+
+4. **Project-Specific Agents/Commands**:
+   - Review `.claude/agents/` - remove unused agents
+   - Review `.claude/commands/` - customize for your workflow
+   - Add project-specific automation
+
+## Template Structure
+
+```
+claude-code-boilerplate/
+├── .claude/
+│   ├── agents/          # 10 specialized MCP-enhanced agents
+│   ├── commands/        # 20+ workflow automation commands
+│   └── settings.json    # Team configuration
+├── .github/
+│   ├── workflows/       # Template init & validation
+│   └── ISSUE_TEMPLATE/  # Bug reports & feature requests
+├── hack/
+│   └── spec_metadata.sh # Documentation generation
+├── scripts/
+│   ├── init-template.sh # Template initialization
+│   └── setup.sh         # Post-init setup
+├── CLAUDE.md            # MCP integration guidelines
+├── LICENSE              # Apache 2.0 with attribution
+├── CONTRIBUTING.md      # Contribution guidelines
+└── README.md            # This file
 ```
 
-Get your free key from: https://kit-mcp.cased.com/
-
-### Verify Setup
-
-Check MCP server status:
-
-```bash
-claude mcp list
-```
-
-You should see **kit-dev** and **ref** listed.
-
-### MCP-Enhanced Agents
-
-This repository includes 6 MCP-enhanced agents in `.claude/agents/`:
+## MCP-Enhanced Agents
 
 | Agent | Purpose | MCP Tools |
 |-------|---------|-----------|
@@ -62,35 +106,30 @@ This repository includes 6 MCP-enhanced agents in `.claude/agents/`:
 | **external-doc-researcher** | Research documentation | Ref MCP |
 | **mcp-package-researcher** | Deep package research | Kit + Ref MCP |
 | **codebase-dependency-tracer** | Trace dependencies | Kit MCP |
+| **linear-ticket-reader** | Read Linear tickets | Linear MCP |
+| **linear-searcher** | Search Linear tickets | Linear MCP |
+| **thoughts-locator** | Find thoughts documents | Grep/Glob |
+| **thoughts-analyzer** | Analyze thoughts content | Read |
 
 Agents automatically use MCP tools when available, or gracefully degrade to basic tools if not configured.
 
-### Configuration Files
+## MCP Integration
 
-- **`.mcp.json`** - Team-shared MCP server configs (committed to git)
-- **`.claude/settings.json`** - Team permissions and approvals (committed to git)
-- **`.claude/settings.local.json`** - Personal overrides (auto-ignored by git)
+This template is designed to work seamlessly with:
+- **Kit MCP** - Codebase intelligence and AST analysis
+- **Ref MCP** - External documentation research
+- **Linear MCP** - Ticket management (optional)
 
-### Troubleshooting
+See [CLAUDE.md](CLAUDE.md) for detailed MCP integration guidelines.
 
-**MCP servers not starting:**
-```bash
-# Check if npx can find the packages
-npx @kitprotocol/mcp-server-kit --version
-npx @modelcontextprotocol/server-ref --version
+## Contributing
 
-# Reset MCP server approvals
-claude mcp reset-project-choices
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on improving this template.
 
-**Tools not available to agents:**
-- Verify MCP servers are running: `claude mcp list`
-- Check `.claude/settings.json` has `enabledMcpjsonServers: ["kit-dev", "ref"]`
-- Restart Claude Code
+## License
 
-### Resources
+See [LICENSE](LICENSE) for licensing information and attributions.
 
-- **Claude Code Documentation**: https://docs.claude.com/en/docs/claude-code
-- **Kit MCP**: https://kit-mcp.cased.com/
-- **Ref MCP**: https://ref.tools/
-- **MCP Integration Guide**: `thoughts/shared/research/claude-code-configuration-guide.md`
+## Acknowledgments
+
+See [ACKNOWLEDGMENTS.md](ACKNOWLEDGMENTS.md) for full attribution of patterns adapted from HumanLayer.
