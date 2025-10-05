@@ -1,0 +1,47 @@
+name: Initialize Template
+
+on:
+  create:  # Triggered when repository is created from template
+
+jobs:
+  initialize:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check if template initialization needed
+        id: check
+        run: |
+          if grep -q "{{REPO_NAME}}" README.md; then
+            echo "needs_init=true" >> $GITHUB_OUTPUT
+          else
+            echo "needs_init=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get repository info
+        if: steps.check.outputs.needs_init == 'true'
+        run: |
+          echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
+          echo "GITHUB_USER=${GITHUB_REPOSITORY%/*}" >> $GITHUB_ENV
+          echo "REPO_PATH=/home/runner/work/${GITHUB_REPOSITORY#*/}/${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
+
+      - name: Replace placeholders
+        if: steps.check.outputs.needs_init == 'true'
+        run: |
+          find . -type f \( -name "*.md" -o -name "*.sh" -o -name "*.json" \) \
+            -not -path "*/.git/*" \
+            -not -path "*/.github/workflows/*" \
+            -exec sed -i "s/{{REPO_NAME}}/$REPO_NAME/g" {} \; \
+            -exec sed -i "s/{{GITHUB_USER}}/$GITHUB_USER/g" {} \; \
+            -exec sed -i "s|{{REPO_PATH}}|$REPO_PATH|g" {} \;
+
+      - name: Commit changes
+        if: steps.check.outputs.needs_init == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: initialize template with repository-specific values"
+          git push

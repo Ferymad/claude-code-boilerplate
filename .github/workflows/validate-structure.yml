@@ -1,0 +1,59 @@
+name: Validate Template Structure
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check required files
+        run: |
+          required_files=(
+            ".claude/settings.json"
+            "CLAUDE.md"
+            "README.md"
+            "LICENSE"
+            "CONTRIBUTING.md"
+            ".mcp.example.json"
+          )
+
+          for file in "${required_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Missing required file: $file"
+              exit 1
+            fi
+          done
+
+          echo "✅ All required files present"
+
+      - name: Check required directories
+        run: |
+          required_dirs=(
+            ".claude/agents"
+            ".claude/commands"
+            "hack"
+          )
+
+          for dir in "${required_dirs[@]}"; do
+            if [ ! -d "$dir" ]; then
+              echo "❌ Missing required directory: $dir"
+              exit 1
+            fi
+          done
+
+          echo "✅ All required directories present"
+
+      - name: Verify no hardcoded references
+        run: |
+          if grep -r "hlyr-reveng" . --exclude-dir=.git --exclude-dir=thoughts; then
+            echo "❌ Found hardcoded 'hlyr-reveng' references"
+            exit 1
+          fi
+
+          echo "✅ No hardcoded references found"
